@@ -1,80 +1,104 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import { loginUser, registerUser, getCurrentUser } from '../services/authService';
+import { createContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
+    // Check if user is logged in
     const checkLoggedIn = async () => {
       try {
         const token = localStorage.getItem('token');
+        
         if (token) {
-          // Check if token is expired
-          const decodedToken = jwtdecode(token);
-          const currentTime = Date.now() / 1000;
+          // Set auth token header
+          axios.defaults.headers.common['x-auth-token'] = token;
           
-          if (decodedToken.exp < currentTime) {
-            // Token expired
-            localStorage.removeItem('token');
-            setCurrentUser(null);
-          } else {
-            // Token valid, get current user
-            const userData = await getCurrentUser();
-            setCurrentUser(userData);
-          }
+          // Get user data
+          const res = await axios.get(`${API_URL}/api/auth/me`);
+          setUser(res.data);
         }
       } catch (err) {
-        console.error('Authentication error:', err);
+        // Clear token on error
         localStorage.removeItem('token');
+        delete axios.defaults.headers.common['x-auth-token'];
+        console.error('Authentication error:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
     checkLoggedIn();
-  }, []);
+  }, [API_URL]);
 
-  const login = async (credentials) => {
+  // Register user
+  const register = async (formData) => {
     try {
-      setError(null);
-      const response = await loginUser(credentials);
-      localStorage.setItem('token', response.token);
-      setCurrentUser(response.user);
-      return response.user;
+      const res = await axios.post(`${API_URL}/api/auth/register`, formData);
+      
+      // Set token in storage
+      localStorage.setItem('token', res.data.token);
+      
+      // Set auth token header
+      axios.defaults.headers.common['x-auth-token'] = res.data.token;
+      
+      // Fetch user data after registration
+      const userRes = await axios.get(`${API_URL}/api/auth/me`);
+      setUser(userRes.data);
+      
+      return res.data;
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
       throw err;
     }
   };
 
-  const register = async (userData) => {
+  // Login user
+  const login = async (formData) => {
     try {
-      setError(null);
-      const response = await registerUser(userData);
-      localStorage.setItem('token', response.token);
-      setCurrentUser(response.user);
-      return response.user;
+      const res = await axios.post(`${API_URL}/api/auth/login`, formData);
+      
+      // Set token in storage
+      localStorage.setItem('token', res.data.token);
+      
+      // Set auth token header
+      axios.defaults.headers.common['x-auth-token'] = res.data.token;
+      
+      // Fetch user data after login
+      const userRes = await axios.get(`${API_URL}/api/auth/me`);
+      setUser(userRes.data);
+      
+      return res.data;
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
       throw err;
     }
   };
 
+  // Logout user
   const logout = () => {
+    // Remove token
     localStorage.removeItem('token');
-    setCurrentUser(null);
-    navigate('/login');
+    
+    // Remove auth header
+    delete axios.defaults.headers.common['x-auth-token'];
+    
+    // Clear user
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, isLoading, error, login, register, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        register,
+        login,
+        logout
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

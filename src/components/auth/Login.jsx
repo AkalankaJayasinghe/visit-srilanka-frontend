@@ -1,90 +1,92 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { toast } from 'react-toastify';
-import { AuthContext } from '../../context/AuthContext';
+import { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+import './auth.css';
 
 const Login = () => {
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const [serverError, setServerError] = useState('');
-
-  const initialValues = {
+  const [formData, setFormData] = useState({
     email: '',
-    password: '',
+    password: ''
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get redirect path from location state or default to home
+  const from = location.state?.from?.pathname || "/";
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
-  const validationSchema = Yup.object({
-    email: Yup.string()
-      .email('Invalid email address')
-      .required('Email is required'),
-    password: Yup.string()
-      .required('Password is required'),
-  });
-
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+    
     try {
-      setServerError('');
-      await login(values);
-      toast.success('Login successful!');
-      navigate('/home');
-    } catch (error) {
-      setServerError(error.response?.data?.message || 'Login failed. Please try again.');
-      toast.error('Login failed');
+      console.log('Attempting login with:', formData);
+      await login(formData);
+      navigate(from, { replace: true });
+    } catch (err) {
+      console.error('Login error details:', err);
+      setError(err.response?.data?.message || 'Invalid credentials');
     } finally {
-      setSubmitting(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h2 className="login-title">Login</h2>
-        {serverError && <div className="error-alert">{serverError}</div>}
+    <div className="auth-container">
+      <div className="auth-card">
+        <h2>Login to Your Account</h2>
         
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ isSubmitting }) => (
-            <Form>
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <Field
-                  type="email"
-                  id="email"
-                  name="email"
-                  className="form-input"
-                />
-                <ErrorMessage name="email" component="div" className="form-error" />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="password">Password</label>
-                <Field
-                  type="password"
-                  id="password"
-                  name="password"
-                  className="form-input"
-                />
-                <ErrorMessage name="password" component="div" className="form-error" />
-              </div>
-
-              <button
-                type="submit"
-                className="login-button"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Logging in...' : 'Login'}
-              </button>
-            </Form>
-          )}
-        </Formik>
+        {error && <div className="alert alert-error">{error}</div>}
         
-        <div className="login-footer">
-          <p>Don't have an account? <Link to="/register">Register</Link></p>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              placeholder="Enter your email"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="Enter your password"
+            />
+          </div>
+          
+          <button
+            type="submit"
+            className="btn btn-primary btn-block"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+        
+        <div className="auth-footer">
+          Don't have an account? <Link to="/register">Register here</Link>
         </div>
       </div>
     </div>

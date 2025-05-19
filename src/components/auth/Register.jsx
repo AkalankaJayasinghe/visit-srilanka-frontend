@@ -1,7 +1,7 @@
-// src/components/auth/Register.jsx
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import './auth.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -30,9 +30,11 @@ const Register = () => {
     setIsLoading(true);
     
     try {
+      console.log('Attempting registration with:', formData);
       await register(formData);
       navigate('/');
     } catch (err) {
+      console.error('Registration error details:', err);
       setError(err.response?.data?.message || 'Registration failed');
     } finally {
       setIsLoading(false);

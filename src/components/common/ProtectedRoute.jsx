@@ -1,25 +1,28 @@
-// src/components/common/ProtectedRoute.jsx
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import Spinner from './Spinner';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const { user, isLoading } = useAuth();
   const location = useLocation();
 
+  // Show spinner while authentication state is being determined
   if (isLoading) {
-    return <div className="loading">Loading...</div>;
+    return <Spinner />;
   }
 
+  // Redirect to login if user is not authenticated
   if (!user) {
-    // Redirect to login if not authenticated
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  // Redirect to home if role restrictions exist and user doesn't have permission
   if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-    // Redirect to home if not authorized for this role
+    // You could also show an "unauthorized" message instead of redirecting
     return <Navigate to="/" replace />;
   }
 
+  // Render the protected content
   return children;
 };
 

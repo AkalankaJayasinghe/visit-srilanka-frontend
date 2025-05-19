@@ -1,12 +1,14 @@
-// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-// Common Components
+import './assets/styles/main.css';
+import './components/common/Spinner.css';
+import './index.css';
 import Navbar from './components/common/Navbar';
+import Footer from './components/common/Footer';
 import ProtectedRoute from './components/common/ProtectedRoute';
+// import './assets/styles/Footer.module.css';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -34,6 +36,7 @@ function App() {
               {/* Add other routes as needed */}
             </Routes>
           </main>
+          <Footer />
           <ToastContainer position="bottom-right" />
         </div>
       </AuthProvider>
