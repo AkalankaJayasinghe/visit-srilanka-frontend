@@ -15,7 +15,8 @@ import LandingPage from './pages/LandingPage';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import HomePage from './pages/HomePage';
-// Import other pages as needed
+import HotelsPage from './pages/HotelsPage';
+import HotelDetailPage from './pages/HotelDetailPage';
 
 function App() {
   return (
@@ -33,6 +34,8 @@ function App() {
                   <HomePage />
                 </ProtectedRoute>
               } />
+              <Route path="/hotels" element={<HotelsPage />} />
+              <Route path="/hotels/:id" element={<HotelDetailPage />} />
               {/* Add other routes as needed */}
             </Routes>
           </main>

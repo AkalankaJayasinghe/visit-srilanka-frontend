@@ -1,100 +1,113 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-import Header from '../components/common/Header';
-import Footer from '../components/common/Footer';
-import HotelList from '../components/tourist/HotelList';
-import SearchBar from '../components/common/SearchBar';
-import Loader from '../components/common/Loader';
-import { getAllHotels } from '../services/hotelService';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import HotelCard from '../components/hotels/HotelCard';
+import HotelForm from '../components/hotels/HotelForm';
+import Spinner from '../components/common/Spinner';
+import './HotelsPage.css';
 
 const HotelsPage = () => {
   const [hotels, setHotels] = useState([]);
-  const [filteredHotels, setFilteredHotels] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchParams, setSearchParams] = useState({
-    name: '',
-    location: '',
-    priceMin: '',
-    priceMax: '',
-  });
+  const [searchCity, setSearchCity] = useState('');
+  const [filteredHotels, setFilteredHotels] = useState([]);
 
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+  // Fetch all hotels on component mount
   useEffect(() => {
-    const fetchHotels = async () => {
-      try {
-        setLoading(true);
-        const data = await getAllHotels();
-        setHotels(data);
-        setFilteredHotels(data);
-      } catch (err) {
-        setError(err.message || 'Failed to fetch hotels');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchHotels();
   }, []);
 
-  const handleSearch = (params) => {
-    setSearchParams(params);
-    let filtered = [...hotels];
-
-    if (params.name) {
-      filtered = filtered.filter(hotel => 
-        hotel.name.toLowerCase().includes(params.name.toLowerCase())
+  // Filter hotels when search changes
+  useEffect(() => {
+    if (searchCity.trim() === '') {
+      setFilteredHotels(hotels);
+    } else {
+      const filtered = hotels.filter(hotel => 
+        hotel.location.city.toLowerCase().includes(searchCity.toLowerCase())
       );
+      setFilteredHotels(filtered);
     }
+  }, [searchCity, hotels]);
 
-    if (params.location) {
-      filtered = filtered.filter(hotel => 
-        hotel.location.toLowerCase().includes(params.location.toLowerCase())
-      );
+  const fetchHotels = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const res = await axios.get(`${API_URL}/api/hotels`);
+      setHotels(res.data);
+      setFilteredHotels(res.data);
+    } catch (err) {
+      console.error('Error fetching hotels:', err);
+      setError('Failed to fetch hotels. Please try again later.');
+      toast.error('Error loading hotels');
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    if (params.priceMin) {
-      filtered = filtered.filter(hotel => hotel.pricePerNight >= params.priceMin);
-    }
+  const handleHotelAdded = (newHotel) => {
+    setHotels(prevHotels => [newHotel, ...prevHotels]);
+    toast.success('New hotel added successfully!');
+  };
 
-    if (params.priceMax) {
-      filtered = filtered.filter(hotel => hotel.pricePerNight <= params.priceMax);
-    }
-
-    setFilteredHotels(filtered);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Search is already handled by the useEffect
   };
 
   return (
-    <>
-      <Header />
-      <Container className="py-5">
-        <h1 className="mb-4">Find the Perfect Hotel in Sri Lanka</h1>
-        
-        <SearchBar 
-          onSearch={handleSearch}
-          fields={[
-            { name: 'name', label: 'Hotel Name', type: 'text' },
-            { name: 'location', label: 'Location', type: 'text' },
-            { name: 'priceMin', label: 'Min Price', type: 'number' },
-            { name: 'priceMax', label: 'Max Price', type: 'number' },
-          ]}
-        />
-        
-        {loading ? (
-          <Loader />
+    <div className="hotels-page">
+      <div className="container">
+        <div className="hotels-header">
+          <h1>Explore Hotels in Sri Lanka</h1>
+          <p>Discover the finest accommodations for your dream vacation</p>
+
+          <div className="search-container">
+            <form onSubmit={handleSearch}>
+              <div className="search-input-group">
+                <input
+                  type="text"
+                  placeholder="Search hotels by city..."
+                  value={searchCity}
+                  onChange={(e) => setSearchCity(e.target.value)}
+                />
+                <button type="submit" className="search-btn">
+                  <i className="fas fa-search"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* Hotel Form - Only visible to hotel owners */}
+        <HotelForm onHotelAdded={handleHotelAdded} />
+
+        {/* Hotels List */}
+        {isLoading ? (
+          <Spinner />
         ) : error ? (
-          <div className="alert alert-danger" role="alert">
-            {error}
+          <div className="error-message">{error}</div>
+        ) : filteredHotels.length === 0 ? (
+          <div className="no-hotels-message">
+            {searchCity.trim() === '' 
+              ? 'No hotels available yet. Be the first to add one!'
+              : `No hotels found in "${searchCity}". Try another city or clear your search.`}
           </div>
         ) : (
-          <Row className="mt-4">
-            <Col>
-              <HotelList hotels={filteredHotels} />
-            </Col>
-          </Row>
+          <div className="hotels-grid">
+            {filteredHotels.map(hotel => (
+              <div key={hotel._id} className="hotel-card-wrapper">
+                <HotelCard hotel={hotel} />
+              </div>
+            ))}
+          </div>
         )}
-      </Container>
-      <Footer />
-    </>
+      </div>
+    </div>
   );
 };
 
