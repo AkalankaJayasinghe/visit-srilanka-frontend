@@ -20,7 +20,14 @@ export const AuthProvider = ({ children }) => {
           
           // Get user data
           const res = await axios.get(`${API_URL}/api/auth/me`);
-          setUser(res.data);
+          
+          // Debug: Log the user data received from API
+          console.log('User data from API:', res.data);
+          
+          // Process user data to ensure role is accessible
+          const userData = processUserData(res.data);
+          
+          setUser(userData);
         }
       } catch (err) {
         // Clear token on error
@@ -35,6 +42,53 @@ export const AuthProvider = ({ children }) => {
     checkLoggedIn();
   }, [API_URL]);
 
+  // Process user data to ensure role property exists
+  const processUserData = (userData) => {
+    if (!userData) return null;
+    
+    // Clone the user data
+    const processedUser = { ...userData };
+    
+    // Make sure role is at the top level for easy access
+    const rolePropertyNames = ['role', 'userRole', 'user_role', 'userType', 'type', 'role_id'];
+    
+    // Find the first property that contains role information
+    let foundRoleProperty = false;
+    
+    for (const propName of rolePropertyNames) {
+      if (processedUser[propName]) {
+        // If role property exists, ensure it's normalized
+        processedUser.role = processedUser[propName];
+        foundRoleProperty = true;
+        console.log(`Found role as ${propName}:`, processedUser.role);
+        break;
+      }
+    }
+    
+    // If no role property found at top level, try to find it in nested objects
+    if (!foundRoleProperty) {
+      // Check if user data might be nested
+      if (processedUser.user && typeof processedUser.user === 'object') {
+        console.log('Looking for role in nested user object');
+        for (const propName of rolePropertyNames) {
+          if (processedUser.user[propName]) {
+            processedUser.role = processedUser.user[propName];
+            foundRoleProperty = true;
+            console.log(`Found role in nested object as ${propName}:`, processedUser.role);
+            break;
+          }
+        }
+      }
+    }
+    
+    // If we still don't have a role, log a warning
+    if (!foundRoleProperty) {
+      console.warn('Could not find role property in user data:', processedUser);
+    }
+    
+    return processedUser;
+  };
+
   // Register user
   const register = async (formData) => {
     try {
@@ -48,7 +102,10 @@ export const AuthProvider = ({ children }) => {
       
       // Fetch user data after registration
       const userRes = await axios.get(`${API_URL}/api/auth/me`);
-      setUser(userRes.data);
+      
+      // Process user data
+      const userData = processUserData(userRes.data);
+      setUser(userData);
       
       return res.data;
     } catch (err) {
@@ -61,6 +118,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await axios.post(`${API_URL}/api/auth/login`, formData);
       
+      // Debug: Log the login response
+      console.log('Login response:', res.data);
+      
       // Set token in storage
       localStorage.setItem('token', res.data.token);
       
@@ -69,7 +129,13 @@ export const AuthProvider = ({ children }) => {
       
       // Fetch user data after login
       const userRes = await axios.get(`${API_URL}/api/auth/me`);
-      setUser(userRes.data);
+      
+      // Debug: Log the user data
+      console.log('User data after login:', userRes.data);
+      
+      // Process user data
+      const userData = processUserData(userRes.data);
+      setUser(userData);
       
       return res.data;
     } catch (err) {

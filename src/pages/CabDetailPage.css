@@ -1,0 +1,538 @@
+.cab-detail-page {
+  padding: 40px 0;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.navigation-breadcrumb {
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.navigation-breadcrumb a {
+  color: #4a5568;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.navigation-breadcrumb a:hover {
+  color: #4299e1;
+}
+
+/* Owner actions */
+.owner-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  justify-content: flex-end;
+}
+
+/* Hero Section */
+.cab-hero {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.cab-gallery {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.main-image {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+}
+
+.main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cab-status {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 15px;
+}
+
+.status-indicator {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.status-indicator.available {
+  background-color: #c6f6d5;
+  color: #276749;
+}
+
+.status-indicator.unavailable {
+  background-color: #fed7d7;
+  color: #c53030;
+}
+
+.thumbnail-gallery {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  background-color: white;
+  overflow-x: auto;
+}
+
+.thumbnail {
+  width: 80px;
+  min-width: 80px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.thumbnail:hover {
+  opacity: 0.9;
+  transform: translateY(-3px);
+}
+
+.thumbnail.active {
+  opacity: 1;
+  box-shadow: 0 0 0 2px #4299e1;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cab-header {
+  padding: 25px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.cab-header h1 {
+  font-size: 2.2rem;
+  color: #2d3748;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.cab-meta {
+  margin-bottom: 25px;
+}
+
+.cab-type-model {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.vehicle-type {
+  background-color: #ebf8ff;
+  color: #3182ce;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.vehicle-model {
+  font-size: 1.1rem;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.license-plate {
+  background-color: #2d3748;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+}
+
+.cab-price-capacity {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.price-per-km {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.capacity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4a5568;
+  font-size: 1.1rem;
+}
+
+.capacity i {
+  color: #4299e1;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.star {
+  color: #edf2f7;
+  font-size: 1.2rem;
+  margin-right: 2px;
+}
+
+.star.filled {
+  color: #f6ad55;
+}
+
+.rating-value {
+  font-weight: 700;
+  color: #2d3748;
+  margin-left: 8px;
+  margin-right: 5px;
+}
+
+.review-count {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.operating-areas {
+  margin-top: 20px;
+}
+
+.operating-areas h3 {
+  font-size: 1.2rem;
+  color: #2d3748;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.areas-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.area-tag {
+  background-color: #e6fffa;
+  color: #319795;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Main Content */
+.cab-content {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  gap: 30px;
+}
+
+.cab-main {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.cab-main section {
+  padding: 30px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.cab-main section:last-child {
+  border-bottom: none;
+}
+
+.cab-main h2 {
+  font-size: 1.6rem;
+  color: #2d3748;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.description-section p {
+  color: #4a5568;
+  line-height: 1.8;
+  font-size: 1.05rem;
+}
+
+/* Reviews Section */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-item {
+  padding: 20px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border-left: 3px solid #4299e1;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.reviewer-name {
+  font-weight: 600;
+  color: #2d3748;
+  margin-right: 10px;
+}
+
+.review-date {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.review-rating .star {
+  font-size: 0.95rem;
+}
+
+.review-comment {
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+/* Sidebar */
+.cab-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sidebar-section {
+  background-color: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-section h3 {
+  font-size: 1.3rem;
+  color: #2d3748;
+  margin-bottom: 20px;
+  font-weight: 600;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+/* Contact Section */
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.contact-list li {
+  display: flex;
+  align-items: center;
+  color: #4a5568;
+}
+
+.contact-list i {
+  width: 20px;
+  margin-right: 15px;
+  color: #4299e1;
+}
+
+.booking-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+/* Specs Section */
+.specs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.specs-list li {
+  display: flex;
+  justify-content: space-between;
+  color: #4a5568;
+  padding: 8px 0;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.specs-list li:last-child {
+  border-bottom: none;
+}
+
+.spec-label {
+  font-weight: 500;
+  color: #718096;
+}
+
+.available-text {
+  color: #38a169;
+  font-weight: 600;
+}
+
+.unavailable-text {
+  color: #e53e3e;
+  font-weight: 600;
+}
+
+/* Back Button */
+.back-button-container {
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  text-decoration: none;
+  justify-content: center;
+}
+
+.btn-primary {
+  background-color: #4299e1;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #3182ce;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: #edf2f7;
+  color: #4a5568;
+}
+
+.btn-secondary:hover {
+  background-color: #e2e8f0;
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background-color: #fc8181;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #f56565;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .cab-hero {
+    grid-template-columns: 1fr;
+  }
+  
+  .cab-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .main-image {
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cab-detail-page {
+    padding: 30px 0;
+  }
+  
+  .cab-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .review-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .cab-type-model,
+  .cab-price-capacity {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-image {
+    height: 200px;
+  }
+  
+  .thumbnail {
+    width: 60px;
+    height: 45px;
+  }
+  
+  .cab-status {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .status-indicator {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .owner-actions {
+    flex-direction: column;
+  }
+  
+  .owner-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

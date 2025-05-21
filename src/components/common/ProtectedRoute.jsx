@@ -2,9 +2,12 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import Spinner from './Spinner';
 
-const ProtectedRoute = ({ children, allowedRoles = [] }) => {
+const ProtectedRoute = ({ children, roles = [] }) => {
   const { user, isLoading } = useAuth();
   const location = useLocation();
+
+  // Debug: Log the roles being checked and current user
+  console.log('ProtectedRoute - Allowed roles:', roles, 'Current user role:', user?.role);
 
   // Show spinner while authentication state is being determined
   if (isLoading) {
@@ -17,7 +20,8 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   }
 
   // Redirect to home if role restrictions exist and user doesn't have permission
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+  if (roles.length > 0 && !roles.includes(user.role)) {
+    console.log('Role restriction: User does not have required role');
     // You could also show an "unauthorized" message instead of redirecting
     return <Navigate to="/" replace />;
   }
