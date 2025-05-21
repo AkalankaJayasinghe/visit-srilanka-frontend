@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastContainer } from 'react-toastify';
@@ -8,15 +9,21 @@ import './index.css';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import ProtectedRoute from './components/common/ProtectedRoute';
-// import './assets/styles/Footer.module.css';
 
 // Pages
 import LandingPage from './pages/LandingPage';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
+
+// Hotel Pages
 import HotelsPage from './pages/HotelsPage';
 import HotelDetailPage from './pages/HotelDetailPage';
+
+// Restaurant Pages
+import RestaurantsPage from '../src/pages/RestaurantsPage';
+import RestaurantDetailPage from './pages/RestaurantDetailPage';
+import AddEditRestaurantPage from './pages/AddEditRestaurantPage';
 
 function App() {
   return (
@@ -27,16 +34,31 @@ function App() {
           <main className="main-content">
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
               <Route path="/home" element={
                 <ProtectedRoute>
                   <HomePage />
                 </ProtectedRoute>
               } />
+              
+              {/* Hotel Routes */}
               <Route path="/hotels" element={<HotelsPage />} />
               <Route path="/hotels/:id" element={<HotelDetailPage />} />
-              {/* Add other routes as needed */}
+              
+              {/* Restaurant Routes */}
+              <Route path="/restaurants" element={<RestaurantsPage />} />
+              <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
+              <Route path="/restaurants/add" element={
+                <ProtectedRoute roles={['restaurant_owner']}>
+                  <AddEditRestaurantPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/restaurants/edit/:id" element={
+                <ProtectedRoute roles={['restaurant_owner']}>
+                  <AddEditRestaurantPage isEdit={true} />
+                </ProtectedRoute>
+              } />
             </Routes>
           </main>
           <Footer />
